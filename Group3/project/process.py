@@ -325,4 +325,6 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    #main()
+    # animate('industries/industry_index_names.csv', 'industry', '2011-03-15', '2021-03-15', 90)
+    animate('sectors/index_names.csv', 'sector', '2011-03-15', '2021-03-15', 90)

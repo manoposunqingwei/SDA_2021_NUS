@@ -4,3 +4,6 @@ downloaded_data/data/*
 *.ipynb_checkpoints/
 industries/industry_index_names.csv
 sectors/index_names.csv
+animations/*/*.png
+animations/*/*.gif
+
