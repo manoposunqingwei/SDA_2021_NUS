@@ -25,8 +25,8 @@ sectors = ['basic_industries', 'capital_goods', 'consumer_durables', 'consumer_n
 def symbol_to_path(symbol):
     # please download from below link:  
     # https://drive.google.com/file/d/1Uy0VmrkbKUAskGKAAQo45F8unrphAF14/view?usp=sharing
-    if os.path.exists('downloaded_data/data/'):
-        return "downloaded_data/data/{}.csv".format(str(symbol))
+    if os.path.exists(os.path.join('downloaded_data', 'data')):
+        return os.path.join('downloaded_data', 'data', '{}.csv'.format(str(symbol)))
     else:
         logging.error('please make sure path \'downloaded_data/data/\' is present under current working directory!')
         exit(1)
@@ -85,10 +85,10 @@ def construct_index(sym_file, index_file_name):
     df.to_csv(index_file_name) 
 
 def sector_index():
-    f = open('sectors/index_names.csv', 'w')
+    f = open(os.path.join('sectors', 'index_names.csv'), 'w')
     for s in sectors:
-        sym_file = 'sectors/{}_sym.csv'.format(s)
-        output = 'downloaded_data/data/{}_index.csv'.format(s)
+        sym_file = os.path.join('sectors', '{}_sym.csv'.format(s))
+        output = os.path.join('downloaded_data', 'data', '{}_index.csv'.format(s))
         try: 
             logging.info('Constructing index for sector: {}'.format(s))
             construct_index(sym_file, output)
@@ -100,14 +100,14 @@ def sector_index():
 
 def industry_index():
     industries = []
-    with open('industries/industry_list.csv', 'r') as f:
+    with open(os.path.join('industries', 'industry_list.csv'), 'r') as f:
         lines = f.readlines()
         industries.extend([line.strip() for line in lines])
 
-    f = open('industries/industry_index_names.csv', 'w')
+    f = open(os.path.join('industries', 'industry_index_names.csv'), 'w')
     for i in industries:
-        sym_file = 'industries/{}_sym.csv'.format(i)
-        output = 'downloaded_data/data/{}_ind_index.csv'.format(i)
+        sym_file = os.path.join('industries', '{}_sym.csv'.format(i))
+        output = os.path.join('downloaded_data', 'data', '{}_ind_index.csv'.format(i))
         try: 
             logging.info('Constructing index for industry: {}'.format(i))
             construct_index(sym_file, output)
@@ -200,22 +200,22 @@ def run(sym_file, category):
     data.sort_index(inplace=True)
     # data.to_csv('data_{}.csv'.format(category))
 
-    figure_path = 'figures/{}'.format(category)
+    figure_path = os.path.join('figures', '{}'.format(category))
 
     if not (os.path.exists(figure_path) and os.path.isdir(figure_path)):
         os.makedirs(figure_path)
 
     logging.info('{}: plotting corr graph for 10 years interval'.format(category))
-    cluster_plot(data, '2011-03-16', '2021-03-15', '{}/{}_corr_10y.png'.format(figure_path, category), False)
+    cluster_plot(data, '2011-03-16', '2021-03-15', os.path.join('{}'.format(figure_path), '{}_corr_10y.png'.format(category)), False)
     logging.info('{}: plotting clustered corr graph for 10 years interval'.format(category))
-    cluster_plot(data, '2011-03-16', '2021-03-15', '{}/{}_corr_cluster_10y.png'.format(figure_path, category), True)
+    cluster_plot(data, '2011-03-16', '2021-03-15', os.path.join('{}'.format(figure_path), '{}_corr_cluster_10y.png'.format(category)), True)
 
     for (i,(s,e)) in enumerate(zip(start_dates, end_dates)):
         logging.info('clustering plotting for {} during time period: {} to {}'.format(category, s, e))
-        cluster_plot(data, start_dates[i], end_dates[i], '{}/{}_corr_time_{}.png'.format(figure_path, category, i))
+        cluster_plot(data, start_dates[i], end_dates[i], os.path.join('{}'.format(figure_path), '{}_corr_time_{}.png'.format(category, i)))
     logging.info('{}: plotted corr clustering for the time intervals'.format(category))
 
-def animate(sym_file, category, start, end, interval=30, window=360, cluster=True):
+def animate(sym_file, category, start, end, interval=90, window=360, cluster=True):
     start_date = datetime.strptime(start, '%Y-%m-%d')
     end_date = datetime.strptime(end, '%Y-%m-%d')
     if not os.path.exists(sym_file):
@@ -226,7 +226,7 @@ def animate(sym_file, category, start, end, interval=30, window=360, cluster=Tru
     data = get_data(symbols)
     data.set_index('Date', inplace=True)
     data.sort_index(inplace=True)
-    animation_path = 'animations/{}'.format(category)
+    animation_path = os.path.join('animations', '{}'.format(category))
 
     if not (os.path.exists(animation_path) and os.path.isdir(animation_path)):
         os.makedirs(animation_path)
@@ -289,35 +289,35 @@ def main():
     logging.info('Starting the process...')
 
     logging.info('{}: process for {} symbols'.format('SP500', 'SP500'))
-    run('sectors/sp500_symbol.csv', 'SP500')
-    animate('sectors/sp500_symbol.csv', 'SP500', '2011-03-15', '2021-03-15', 90)
+    run(os.path.join('sectors', 'sp500_symbol.csv'), 'SP500')
+    animate(os.path.join('sectors', 'sp500_symbol.csv'), 'SP500', '2011-03-15', '2021-03-15', 90)
 
     for s in sectors:
         logging.info('{}: process for {} symbols'.format(s, s))
         try:
-            run('sectors/{}_sym.csv'.format(s), s)
+            run(os.path.join('sectors', '{}_sym.csv'.format(s)), s)
         except Exception as e:
             logging.error('Error when trying to process for sector: {}, {}'.format(s, e))
 
-    if not os.path.exists('sectors/index_names.csv'):
+    if not os.path.exists(os.path.join('sectors', 'index_names.csv')):
         logging.info('Constructing sector index...')
         sector_index()
         logging.info('Sector index constructed!')
     
     logging.info('Plotting for sector index corr...')
     try:
-        run('sectors/index_names.csv', 'sector')
+        run(os.path.join('sectors', 'index_names.csv'), 'sector')
     except Exception as e:
         logging.error('Error when trying to process sector index corr: {}'.format(e))
 
-    if not os.path.exists('industries/industry_index_names.csv'):
+    if not os.path.exists(os.path.join('industries', 'industry_index_names.csv')):
         logging.info('Constructing industry index...')
         industry_index()
         logging.info('Industry index constructed!')
     
     logging.info('Plotting for industry index corr...')
     try:
-        run('industries/industry_index_names.csv', 'industry')
+        run(os.path.join('industries', 'industry_index_names.csv'), 'industry')
     except Exception as e:
         logging.error('Error when trying to process industry index corr: {}'.format(e))
 
@@ -327,4 +327,4 @@ def main():
 if __name__ == '__main__':
     #main()
     # animate('industries/industry_index_names.csv', 'industry', '2011-03-15', '2021-03-15', 90)
-    animate('sectors/index_names.csv', 'sector', '2011-03-15', '2021-03-15', 90)
+    animate(os.path.join('sectors', 'index_names.csv'), 'sector', '2011-03-15', '2021-03-15', 90)

@@ -5,7 +5,7 @@ import os
 import argparse
 from concurrent import futures
 
-FILEDIR = 'downloaded_data/data/'
+FILEDIR = os.path.join('downloaded_data', 'data')
 initial = '2011-3-16'
 final = '2021-3-16'
 

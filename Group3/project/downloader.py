@@ -4,7 +4,7 @@ import json
 import time as time
 
 def run(symbol, initial, final):
-    start = int(time.mktime(time.strptime(str(initial), '%Y-%m-%d'))) # convertir fechas
+    start = int(time.mktime(time.strptime(str(initial), '%Y-%m-%d'))) 
     end = int(time.mktime(time.strptime(str(final), '%Y-%m-%d')))
 
     abc = downloader(symbol,start,end)
