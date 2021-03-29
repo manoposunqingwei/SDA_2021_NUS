@@ -20,4 +20,4 @@ In the following guideline please concentrate on submission via pull request (p.
 "Fork of the entire repository by a Quantlet Team member" section is not relevant for you since your Quanlet should be a part of the DEDA class repository.
 
 * Additional information can be found here:
-## [Quantlet Styleguide & FAQ Repository](https://github.com/QuantLet/Styleguide-and-FAQ)**
+## [Quantlet Styleguide & FAQ Repository](https://github.com/QuantLet/Styleguide-and-FAQ)
