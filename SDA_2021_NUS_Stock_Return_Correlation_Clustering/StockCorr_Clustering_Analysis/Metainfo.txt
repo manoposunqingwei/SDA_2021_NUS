@@ -8,7 +8,7 @@ Keywords: 'stock, correlation, hierarchical clustering, temporal, sectors, indus
 
 Author: 'Li Yilin, Mei Yuxin, Sun Qingwei, Xie Chuda, Zhang Yingxin'
 
-See also: 'StockCorr_Data_Downloader'
+See also: 'StockCorr_Data_Downloader, StockCorr_Asset_Allocation'
 
 Submitted:  '01. Apr 2021'
 

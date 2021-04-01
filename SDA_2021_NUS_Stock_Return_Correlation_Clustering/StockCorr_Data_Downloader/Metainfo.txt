@@ -8,7 +8,7 @@ Keywords: 'stock, data, downloader, correlation, clustering, concurrency'
 
 Author: 'Li Yilin, Mei Yuxin, Sun Qingwei, Xie Chuda, Zhang Yingxin'
 
-See also: 'StockCorr_Clustering_Analysis'
+See also: 'StockCorr_Clustering_Analysis, StockCorr_Asset_Allocation'
 
 Submitted:  '01. Apr 2021'
 
