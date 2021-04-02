@@ -54,7 +54,7 @@ def plot_IC(data):
     
 
 if __name__ == '__main__':
-    # get data
+    # get factor data
     factor = pd.read_pickle('weight1.pk')
     factor = factor.T
     factor.dropna(how='all',axis=0,inplace=True)
@@ -63,6 +63,8 @@ if __name__ == '__main__':
     factor.drop(factor.tail(1).index,inplace=True)
     factor.set_index('trading_date',inplace=True)
     factor.drop('info_date',axis=1,inplace=True)
+    
+    # get ret data
     symbols = p.get_symbols_from_file(os.path.join('sectors', 'sp500_symbol.csv'))
     data = p.get_data(symbols)
     data.set_index('Date', inplace=True)
@@ -70,11 +72,18 @@ if __name__ == '__main__':
     ret = data.pct_change()
     ret.drop(ret.head(1).index,inplace=True)
     ret = ret.loc[factor.index[0]:]
+    ret_list = ret.columns.tolist()
+    factor_list = factor.columns.tolist()
+    ret_list = [i for i in ret_list if i in factor_list]
+    ret = ret[ret_list]
+    
+    # get SP500 data
     sp500 = pd.read_excel('SP500.xlsx')
     sp500['date'] = sp500['date'].astype('str')
     sp500.set_index('date',inplace=True)
     ret_sp500 = pd.DataFrame(sp500.pct_change().values,columns=['ret'],index=sp500.index)
     ret_sp500 = ret_sp500.loc[ret.index[0]:ret.index[-1]]
+    
     # ic
     ic = pd.DataFrame(np.nan,index=factor.index,columns=['ic'])
     for i in ic.index:
@@ -82,11 +91,13 @@ if __name__ == '__main__':
         x2 = ret.loc[i].replace({np.nan:0}).astype('float')
         ic['ic'][i] = stats.spearmanr(x1,x2)[0]
     plot_IC(ic)
+    
     # cumret
     weight_ret = factor * ret
     portfolio_ret = pd.DataFrame(weight_ret.sum(axis=1),columns=['daily_ret'])
     portfolio_ret['cum_ret'] = get_cum_ret(portfolio_ret['daily_ret'])
     ret_sp500['cum_ret'] = get_cum_ret(ret_sp500['ret'])
+    
     # performance
     ic_mean = ic.mean()[0]
     ir = ic_mean / ic.std()[0]
