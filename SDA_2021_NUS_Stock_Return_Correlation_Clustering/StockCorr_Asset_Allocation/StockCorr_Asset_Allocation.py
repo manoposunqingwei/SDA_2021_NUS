@@ -54,7 +54,7 @@ def cluster(data):
     return sortIx
 
 if __name__ == '__main__':
-    symbols = p.get_symbols_from_file(os.path.join('sectors', 'sp500_symbol.csv')
+    symbols = p.get_symbols_from_file(os.path.join('sectors', 'sp500_symbol.csv'))
     data = p.get_data(symbols)
     data.set_index('Date', inplace=True)
     data.sort_index(inplace=True)
